@@ -3,6 +3,10 @@ Dream Team project
 
 ## TODO
 
+## Get Data
+- Create a **data** folder in root of project.
+- Get data from [here](https://github.com/epfml/ML_course/tree/master/projects/project1/data)
+
 ### Data Pre-processing 
 - normalize
 - find other popular methods
