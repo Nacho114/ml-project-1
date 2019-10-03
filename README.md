@@ -3,6 +3,10 @@ Dream Team project
 
 ## TODO
 
+## Get Data
+- Create a **data** folder
+- Get the data (to explain)
+
 ### Data Pre-processing 
 - normalize
 - find other popular methods
