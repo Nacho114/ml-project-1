@@ -25,6 +25,8 @@ __pycache__
 .coverage
 .pytest_cache
 
+data/*
+
 *.swp
 *.map
 .idea/
