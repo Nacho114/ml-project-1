@@ -9,12 +9,12 @@ encountered w for iterative methods
 
 import numpy as np
 
-from utils import helpers
+from utils import misc
 
 
 # Generic gradient descent algorithm
 def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w, 
-                     max_iters, gamma, batch_size=None, num_batch=None):
+                     max_iters, gamma, batch_size=None, num_batch=None, debugger=None):
     
     shuffle = True
     
@@ -27,28 +27,24 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
     if not num_batch:
         num_batch = 1
     
-    
-    losses = []
-    ws = [initial_w]
     w = initial_w
     
     for n_iter in range(max_iters):
         loss = compute_loss(y, tx, w)
         
         gradient = 0
-        for minibatch_y, minibatch_tx in helpers.batch_iter(y, tx, batch_size, num_batch, shuffle):
+        for minibatch_y, minibatch_tx in misc.batch_iter(y, tx, batch_size, num_batch, shuffle):
             gradient += compute_gradient(minibatch_y, minibatch_tx, w)
             
         gradient /= num_batch
         
         w = w - gamma * gradient
         
-        ws.append(w)
-        losses.append(loss)
-        print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
-                bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+        if debugger:
+            debugger.add_item('loss', loss)
+            debugger.add_item('w', w)
     
-    return losses, ws
+    return loss, w
 
 
 def compute_loss_ls(y, tx, w):
@@ -64,15 +60,15 @@ def compute_gradient_ls(y, tx, w):
 
 
 # Linear regression using gradient descent
-def least_squares_GD(y, tx, initial_w, max_iters, gamma):
+def least_squares_GD(y, tx, initial_w, max_iters, gamma, debugger=None):
     return gradient_descent(y, tx, compute_loss_ls, compute_gradient_ls, initial_w, 
-                     max_iters, gamma)
+                     max_iters, gamma, debugger=debugger)
 
 
 # Linear regression using stochastic gradient descent
-def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
+def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None):
     batch_size = 1
     num_batch = 1
     
     return gradient_descent(y, tx, compute_loss_ls, compute_gradient_ls, initial_w, 
-                     max_iters, gamma, batch_size, num_batch)
+                     max_iters, gamma, batch_size, num_batch, debugger=debugger)
