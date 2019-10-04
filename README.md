@@ -21,3 +21,11 @@ On PCA
 
 https://jakevdp.github.io/PythonDataScienceHandbook/05.09-principal-component-analysis.html
 
+
+### Ideas
+
+- Split data based in clusteres defined by PCA, train different models on different regions.
+
+- ensemble methods
+
+
