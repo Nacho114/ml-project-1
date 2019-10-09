@@ -72,3 +72,28 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None):
     
     return gradient_descent(y, tx, compute_loss_ls, compute_gradient_ls, initial_w, 
                      max_iters, gamma, batch_size, num_batch, debugger=debugger)
+
+
+
+# Least squares regression using normal equations
+def least_squares(y, tx):
+    N = len(y)
+    [weights, _, _, _] = np.linalg.lstsq(tx, y, rcond=None)
+    
+    return weights
+
+# Ridge regression using normal equations
+def ridge_regression(y, tx, lambda_):
+
+    xtx_inv = np.linalg.inv(tx.T @ tx + lambda_ * np.eye(tx.shape[1]))
+    return (xtx_inv @ (tx.T)) @ y
+    
+
+# Logistic regression using gradient descent or SGD
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    pass
+
+# Regularized logistic regression using gradient descent or SGD
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    pass
+
