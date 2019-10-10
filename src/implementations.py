@@ -10,6 +10,7 @@ encountered w for iterative methods
 import numpy as np
 
 from utils import misc
+import cost
 
 
 # Generic gradient descent algorithm
@@ -90,8 +91,9 @@ def ridge_regression(y, tx, lambda_):
     
 
 # Logistic regression using gradient descent or SGD
-def logistic_regression(y, tx, initial_w, max_iters, gamma):
-    pass
+def logistic_regression(y, tx, initial_w, max_iters, gamma, debugger=None):
+    gradient_descent(y, tx, cost.compute_loss_ce, cost.compute_gradient_logreg, initial_w, 
+                     max_iters, gamma, batch_size=None, num_batch=None, debugger=debugger)
 
 # Regularized logistic regression using gradient descent or SGD
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
