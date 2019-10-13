@@ -104,9 +104,37 @@ def ridge_regression_thierry_version(y, tx, lambda_):
     b = tx.T @ y
     
     [weights, residuals, rank, s] = np.linalg.lstsq(a, b, rcond=None)
-    mse = residuals / (2*N)
+    loss = residuals / (2*N)
     
-    return weights
+    return weights, loss
+
+def build_k_indices(y, k_fold, seed):
+    """build k indices for k-fold."""
+    
+    np.random.seed(seed)
+    
+    num_row = y.shape[0]
+    interval = int(num_row / k_fold)
+    
+    indices = np.random.permutation(num_row)
+    k_indices = [indices[k * interval: (k + 1) * interval]
+                 for k in range(k_fold)]
+    
+    return np.array(k_indices)
+
+
+def cross_validation(y, x, k_indices, k, lambda_, degree):
+    """return the loss of ridge regression."""
+    
+    x_tr = x[np.concatenate((indices[:k], indices[k+1:]))].flatten()
+    y_tr = y[np.concatenate((indices[:k], indices[k+1:]))].flatten()
+    
+    x_te = x[k_indices[k]]
+    y_te = y[k_indices[k]]
+    
+    # ...
+    
+    return ...
     
 
 # Logistic regression using gradient descent or SGD
