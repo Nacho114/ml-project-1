@@ -50,15 +50,15 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
 
 def compute_loss_ls(y, tx, w):
     N = len(y)
-    e = y - np.dot(tx,w)
-    loss = 1/(2*N) * np.dot(e.T,e)
+    e = y - tx @ w
+    loss = 1/(2*N) * e.T @ e
     
     return loss
     
 def compute_gradient_ls(y, tx, w):
     N = len(y)
-    e = y - np.dot(tx,w)
-    gradient = -1/N * np.dot(tx.T, e)
+    e = y - tx @ w
+    gradient = -1/N * tx.T @ e
     
     return gradient
 
@@ -86,9 +86,10 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None):
 # Least squares regression using normal equations
 def least_squares(y, tx):
     N = len(y)
-    [weights, _, _, _] = np.linalg.lstsq(tx, y, rcond=None)
+    [weights, residuals, _, _] = np.linalg.lstsq(tx, y, rcond=None)
+    loss = residuals / (2*N)
     
-    return weights
+    return weights, loss
 
 # Ridge regression using normal equations
 def ridge_regression(y, tx, lambda_):
@@ -100,10 +101,10 @@ def ridge_regression_thierry_version(y, tx, lambda_):
     N = len(y)
     M = tx.shape[1]
     
-    a = tx.T @ tx + lambda_*2*N*np.identity(M)
+    a = tx.T @ tx + lambda_ * (2*N) * np.identity(M)
     b = tx.T @ y
     
-    [weights, residuals, rank, s] = np.linalg.lstsq(a, b, rcond=None)
+    [weights, residuals, _, _] = np.linalg.lstsq(a, b, rcond=None)
     loss = residuals / (2*N)
     
     return weights, loss
@@ -140,10 +141,11 @@ def use_cross_validation(seed, x, y, degree, k_fold, lambda_):
 
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
+    
     # define lists to store the loss of training data and test data
-
     losses_tr = []
     losses_te = []
+    
     for k in range(k_fold):
         loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree)
         losses_tr.append(loss_tr)
