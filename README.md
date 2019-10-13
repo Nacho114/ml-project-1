@@ -1,6 +1,12 @@
 # ml-project-1
 Dream Team project
 
+## Description 
+Project 1 of the "Machine Learning" course (CS433), given in the Fall semester of 2019.
+
+## Report
+Available [here](https://www.overleaf.com/project/5da1c1c43356190001f29d94)
+
 ## TODO
 
 ## Get Data
