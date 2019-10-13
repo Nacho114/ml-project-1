@@ -45,25 +45,30 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
             debugger.add_item('loss', loss)
             debugger.add_item('w', w)
     
-    return loss, w
+    return w, loss
 
 
 def compute_loss_ls(y, tx, w):
     N = len(y)
     e = y - np.dot(tx,w)
     loss = 1/(2*N) * np.dot(e.T,e)
+    
     return loss
     
 def compute_gradient_ls(y, tx, w):
     N = len(y)
     e = y - np.dot(tx,w)
-    return -1/N * np.dot(tx.T, e)
+    gradient = -1/N * np.dot(tx.T, e)
+    
+    return gradient
 
 
 # Linear regression using gradient descent
 def least_squares_GD(y, tx, initial_w, max_iters, gamma, debugger=None):
-    return gradient_descent(y, tx, compute_loss_ls, compute_gradient_ls, initial_w, 
+    w, loss = gradient_descent(y, tx, compute_loss_ls, compute_gradient_ls, initial_w, 
                      max_iters, gamma, debugger=debugger)
+    
+    return w, loss
 
 
 # Linear regression using stochastic gradient descent
@@ -71,8 +76,10 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None):
     batch_size = 1
     num_batch = 1
     
-    return gradient_descent(y, tx, compute_loss_ls, compute_gradient_ls, initial_w, 
+    gradient_descent(y, tx, compute_loss_ls, compute_gradient_ls, initial_w, 
                      max_iters, gamma, batch_size, num_batch, debugger=debugger)
+    
+    return w, loss
 
 
 
