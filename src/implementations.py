@@ -88,6 +88,18 @@ def ridge_regression(y, tx, lambda_):
 
     xtx_inv = np.linalg.inv(tx.T @ tx + lambda_ * np.eye(tx.shape[1]))
     return (xtx_inv @ (tx.T)) @ y
+
+def ridge_regression_thierry_version(y, tx, lambda_):
+    N = len(y)
+    M = tx.shape[1]
+    
+    a = tx.T @ tx + lambda_*2*N*np.identity(M)
+    b = tx.T @ y
+    
+    [weights, residuals, rank, s] = np.linalg.lstsq(a, b, rcond=None)
+    mse = residuals / (2*N)
+    
+    return weights
     
 
 # Logistic regression using gradient descent or SGD
