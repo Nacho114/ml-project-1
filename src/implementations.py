@@ -134,8 +134,25 @@ def cross_validation(y, x, k_indices, k, lambda_, degree):
     
     # ...
     
-    return ...
-    
+    return
+
+def use_cross_validation(seed, x, y, degree, k_fold, lambda_):
+
+    # split data in k fold
+    k_indices = build_k_indices(y, k_fold, seed)
+    # define lists to store the loss of training data and test data
+
+    losses_tr = []
+    losses_te = []
+    for k in range(k_fold):
+        loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree)
+        losses_tr.append(loss_tr)
+        losses_te.append(loss_te)
+
+    rmse_tr = np.mean(losses_tr)
+    rmse_te = np.mean(losses_te)
+        
+return
 
 # Logistic regression using gradient descent or SGD
 def logistic_regression(y, tx, initial_w, max_iters, gamma, debugger=None):
