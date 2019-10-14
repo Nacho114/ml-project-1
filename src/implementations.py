@@ -22,7 +22,6 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
     if not batch_size:
         batch_size = len(y)
         num_batch = 1
-        print('num_batch set to 1 as batch_size is None')
         shuffle = False
     
     if not num_batch:
@@ -47,41 +46,22 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
     
     return w, loss
 
-
-def compute_loss_ls(y, tx, w):
-    N = len(y)
-    e = y - tx @ w
-    loss = 1/(2*N) * e.T @ e
-    
-    return loss
-    
-def compute_gradient_ls(y, tx, w):
-    N = len(y)
-    e = y - tx @ w
-    gradient = -1/N * tx.T @ e
-    
-    return gradient
-
-
 # Linear regression using gradient descent
 def least_squares_GD(y, tx, initial_w, max_iters, gamma, debugger=None):
-    w, loss = gradient_descent(y, tx, compute_loss_ls, compute_gradient_ls, initial_w, 
+    w, loss = gradient_descent(y, tx, cost.compute_loss_ls, cost.compute_gradient_ls, initial_w, 
                      max_iters, gamma, debugger=debugger)
     
     return w, loss
-
 
 # Linear regression using stochastic gradient descent
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None):
     batch_size = 1
     num_batch = 1
     
-    gradient_descent(y, tx, compute_loss_ls, compute_gradient_ls, initial_w, 
+    w, loss = gradient_descent(y, tx, cost.compute_loss_ls, cost.compute_gradient_ls, initial_w, 
                      max_iters, gamma, batch_size, num_batch, debugger=debugger)
     
     return w, loss
-
-
 
 # Least squares regression using normal equations
 def least_squares(y, tx):
@@ -109,53 +89,6 @@ def ridge_regression(y, tx, lambda_):
     loss = residuals / (2*N)
     
     return weights, loss
-
-def build_k_indices(y, k_fold, seed):
-    """build k indices for k-fold."""
-    
-    np.random.seed(seed)
-    
-    num_row = y.shape[0]
-    interval = int(num_row / k_fold)
-    
-    indices = np.random.permutation(num_row)
-    k_indices = [indices[k * interval: (k + 1) * interval]
-                 for k in range(k_fold)]
-    
-    return np.array(k_indices)
-
-
-def cross_validation(y, x, k_indices, k, lambda_, degree):
-    """return the loss of ridge regression."""
-    
-    x_tr = x[np.concatenate((indices[:k], indices[k+1:]))].flatten()
-    y_tr = y[np.concatenate((indices[:k], indices[k+1:]))].flatten()
-    
-    x_te = x[k_indices[k]]
-    y_te = y[k_indices[k]]
-    
-    # ...
-    
-    return
-
-def use_cross_validation(seed, x, y, degree, k_fold, lambda_):
-
-    # split data in k fold
-    k_indices = build_k_indices(y, k_fold, seed)
-    
-    # define lists to store the loss of training data and test data
-    losses_tr = []
-    losses_te = []
-    
-    for k in range(k_fold):
-        loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree)
-        losses_tr.append(loss_tr)
-        losses_te.append(loss_te)
-
-    rmse_tr = np.mean(losses_tr)
-    rmse_te = np.mean(losses_te)
-        
-    return
 
 # Logistic regression using gradient descent or SGD
 def logistic_regression(y, tx, initial_w, max_iters, gamma, debugger=None):
