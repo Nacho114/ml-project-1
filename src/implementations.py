@@ -92,12 +92,13 @@ def least_squares(y, tx):
     return weights, loss
 
 # Ridge regression using normal equations
-def ridge_regression(y, tx, lambda_):
+def ridge_regression_old_version(y, tx, lambda_):
+    N = len(y)
 
-    xtx_inv = np.linalg.inv(tx.T @ tx + lambda_ * np.eye(tx.shape[1]))
+    xtx_inv = np.linalg.inv(tx.T @ tx + lambda_ * (2*N) * np.eye(tx.shape[1]))
     return (xtx_inv @ (tx.T)) @ y
 
-def ridge_regression_thierry_version(y, tx, lambda_):
+def ridge_regression(y, tx, lambda_):
     N = len(y)
     M = tx.shape[1]
     
@@ -154,7 +155,7 @@ def use_cross_validation(seed, x, y, degree, k_fold, lambda_):
     rmse_tr = np.mean(losses_tr)
     rmse_te = np.mean(losses_te)
         
-return
+    return
 
 # Logistic regression using gradient descent or SGD
 def logistic_regression(y, tx, initial_w, max_iters, gamma, debugger=None):
