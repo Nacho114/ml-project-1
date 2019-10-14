@@ -14,7 +14,15 @@ class Debugger:
         plt.plot(self.data[data_type])
         plt.show()
 
-    def print(self, data_type):
+    def clear(self):
+        for dt_type in self.data:
+            self.data[dt_type] = []
+
+    def print(self, data_type, last_n=0):
         size = len(self.data[data_type])
-        for i, x in enumerate(self.data[data_type]):
-            print('step {}/{}'.format(i, size) + ':\t' + data_type + ': ' + str(x))
+
+        if last_n == 0:
+            last_n = size
+
+        for i, x in enumerate(self.data[data_type][-last_n:]):
+            print('step {}/{}'.format(size - last_n + i + 1, size) + ':\t' + data_type + ': ' + str(x))

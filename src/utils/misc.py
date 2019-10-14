@@ -32,3 +32,52 @@ def standardize(x):
     std_x = np.std(x)
     x = x / std_x
     return x, mean_x, std_x
+
+### Cross validation
+
+def build_k_indices(y, k_fold, seed):
+    """build k indices for k-fold."""
+    
+    np.random.seed(seed)
+    
+    num_row = y.shape[0]
+    interval = int(num_row / k_fold)
+    
+    indices = np.random.permutation(num_row)
+    k_indices = [indices[k * interval: (k + 1) * interval]
+                 for k in range(k_fold)]
+    
+    return np.array(k_indices)
+
+
+def cross_validation(y, x, k_indices, k, lambda_, degree):
+    """return the loss of ridge regression."""
+    
+    x_tr = x[np.concatenate((indices[:k], indices[k+1:]))].flatten()
+    y_tr = y[np.concatenate((indices[:k], indices[k+1:]))].flatten()
+    
+    x_te = x[k_indices[k]]
+    y_te = y[k_indices[k]]
+    
+    # ...
+    
+    return
+
+def use_cross_validation(seed, x, y, degree, k_fold, lambda_):
+
+    # split data in k fold
+    k_indices = build_k_indices(y, k_fold, seed)
+    
+    # define lists to store the loss of training data and test data
+    losses_tr = []
+    losses_te = []
+    
+    for k in range(k_fold):
+        loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree)
+        losses_tr.append(loss_tr)
+        losses_te.append(loss_te)
+
+    rmse_tr = np.mean(losses_tr)
+    rmse_te = np.mean(losses_te)
+        
+    return
