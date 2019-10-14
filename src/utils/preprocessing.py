@@ -1,5 +1,11 @@
 import numpy as np
 
+def normalise(x):
+    """
+    Normalise x
+    """
+    return (x - x.mean(axis=0)) / x.std(axis=0)
+
 def most_frequent(x, extended_output=False):
     """
     Get the most frequent value in an array

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 
 class Debugger:
+    '''Debugger class to have a callable debuger'''
 
     def __init__(self, data_types):
         self.data = {}

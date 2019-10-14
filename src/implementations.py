@@ -16,9 +16,11 @@ import cost
 # Generic gradient descent algorithm
 def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w, 
                      max_iters, gamma, batch_size=None, num_batch=None, debugger=None):
-    
+    '''(Stochastic) Gradient descent algorithm'''
+                    
     shuffle = True
-    
+
+    # If batch_size is none, apply standard GD
     if not batch_size:
         batch_size = len(y)
         num_batch = 1
@@ -29,7 +31,7 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
     
     w = initial_w
     
-    for n_iter in range(max_iters):
+    for _ in range(max_iters):
         loss = compute_loss(y, tx, w)
         
         gradient = 0
@@ -50,11 +52,13 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
 def least_squares_GD(y, tx, initial_w, max_iters, gamma, debugger=None):
     w, loss = gradient_descent(y, tx, cost.compute_loss_ls, cost.compute_gradient_ls, initial_w, 
                      max_iters, gamma, debugger=debugger)
+    '''Gradient descent algorithm for least squares'''
     
     return w, loss
 
 # Linear regression using stochastic gradient descent
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None):
+    '''Stochastic Gradient descent algorithm for least squares'''
     batch_size = 1
     num_batch = 1
     
@@ -65,6 +69,7 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None):
 
 # Least squares regression using normal equations
 def least_squares(y, tx):
+    '''Solving least squares via the normal equations'''
     N = len(y)
     [weights, residuals, _, _] = np.linalg.lstsq(tx, y, rcond=None)
     loss = residuals / (2*N)
@@ -73,12 +78,14 @@ def least_squares(y, tx):
 
 # Ridge regression using normal equations
 def ridge_regression_old_version(y, tx, lambda_):
+    '''Solving least squares via the normal equations'''
     N = len(y)
 
     xtx_inv = np.linalg.inv(tx.T @ tx + lambda_ * (2*N) * np.eye(tx.shape[1]))
     return (xtx_inv @ (tx.T)) @ y
 
 def ridge_regression(y, tx, lambda_):
+    '''Solving ridge regression via the normal equations'''
     N = len(y)
     M = tx.shape[1]
     
@@ -90,12 +97,15 @@ def ridge_regression(y, tx, lambda_):
     
     return weights, loss
 
-# Logistic regression using gradient descent or SGD
 def logistic_regression(y, tx, initial_w, max_iters, gamma, debugger=None):
-    gradient_descent(y, tx, cost.compute_loss_ce, cost.compute_gradient_logreg, initial_w, 
+    '''Logistic regression using gradient descent or GD'''
+    return gradient_descent(y, tx, cost.compute_loss_ce, cost.compute_gradient_logreg, initial_w, 
                      max_iters, gamma, batch_size=None, num_batch=None, debugger=debugger)
 
 # Regularized logistic regression using gradient descent or SGD
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
-    pass
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, debugger=None):
+    '''Logistic regression using gradient descent or GD'''
+    compute_gradient = lambda y, tx, w: cost.compute_gradient_reg_logreg(y, tx, w, lambda_)
+    return gradient_descent(y, tx, cost.compute_loss_ce, compute_gradient, initial_w, 
+                     max_iters, gamma, batch_size=None, num_batch=None, debugger=debugger)
 

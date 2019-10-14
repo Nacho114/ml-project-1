@@ -1,5 +1,22 @@
 import numpy as np
 
+def get_predictions(y):
+    """
+    Given a vector of proababilities, returns the optimal bayes
+    prediction, i.e. 1 <-> pr(y_i) > .5, and 0 otherwise
+    """
+    pred = np.ones(len(y)) 
+    to_minus = y < .5 
+    pred[to_minus] = -1
+    return pred
+
+def accuracy(y, y_):
+    """
+    Returns accuracy of prediction y_ vis-a-vis truth y
+    """
+    return (y == y_).sum() / len(y)
+
+
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
     Generate a minibatch iterator for a dataset.
@@ -25,13 +42,6 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
-def standardize(x):
-    """Standardize the original data set."""
-    mean_x = np.mean(x)
-    x = x - mean_x
-    std_x = np.std(x)
-    x = x / std_x
-    return x, mean_x, std_x
 
 ### Cross validation
 
