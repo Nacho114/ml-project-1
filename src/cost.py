@@ -11,6 +11,7 @@ def stable_log(x):
     eps = 1e-15
     return np.log(x + eps)
 
+
 ### Loss functions
 def compute_loss_ls(y, tx, w):
     """Computes the loss of the least squares"""
@@ -49,7 +50,7 @@ def compute_gradient_logreg(y, tx, w):
     
     N = len(y)
     e = sigmoid(tx @ w) - y
-    gradient = (1/N) * tx.T @ e
+    gradient = tx.T @ e
     
     return gradient
 
