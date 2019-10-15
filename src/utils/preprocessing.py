@@ -23,10 +23,6 @@ def most_frequent(x, extended_output=False):
                 
     return (max_val, counter[max_val]) if extended_output else max_val
 
-def most_frequent_new(x):
-    counts = np.bincount(x)
-    return np.argmax(counts)
-
 def replace(x, err_val, find_replacement):
     """
     Replace each occurence of a specified value in an array
