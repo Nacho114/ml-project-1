@@ -1,4 +1,13 @@
 import numpy as np
+import cost
+
+def predict(x, w):
+    """
+    Returns the binary predictions of logistic regression
+    """
+    z = cost.sigmoid(x @ w)
+    return get_predictions(z)
+
 
 def get_predictions(y):
     """
