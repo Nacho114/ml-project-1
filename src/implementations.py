@@ -15,12 +15,17 @@ import cost
 
 # Generic gradient descent algorithm
 def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w, 
-                     max_iters, gamma, batch_size=None, num_batch=None, debugger=None):
+                     max_iters=0, gamma=10e-6, batch_size=None, num_batch=None, debugger=None, dynamic_gamma=False):
     '''(Stochastic) Gradient descent algorithm'''
                     
     shuffle = True
+    run_condition = lambda step, loss, loss_diff : step <= max_iters
+    
+    # If max_iters is 0, stop when loss is stable
+    if max_iters == 0:
+        run_condition = lambda step, loss, loss_diff : abs(loss_diff) >= loss/1000
 
-    # If batch_size is none, apply standard GD
+    # If no batch_size is set, apply standard GD
     if not batch_size:
         batch_size = len(y)
         num_batch = 1
@@ -29,10 +34,23 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
     if not num_batch:
         num_batch = 1
     
+    step = 1
     w = initial_w
     
-    for _ in range(max_iters):
-        loss = compute_loss(y, tx, w)
+    loss = compute_loss(y, tx, w)
+    prev_loss = loss
+    loss_diff = 2*loss
+    
+    while run_condition(step, loss, loss_diff):
+        step += 1
+        
+        prev_loss = loss
+        
+        # If the loss grows, divide gamma by 10
+        if dynamic_gamma and loss_diff < 0:
+            gamma /= 10
+            if debugger:
+                debugger.add_item('gamma', gamma)
         
         gradient = 0
         for minibatch_y, minibatch_tx in misc.batch_iter(y, tx, batch_size, num_batch, shuffle):
@@ -42,6 +60,9 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
         
         w = w - gamma * gradient
         
+        loss = compute_loss(y, tx, w)
+        loss_diff = prev_loss - loss
+        
         if debugger:
             debugger.add_item('loss', loss)
             debugger.add_item('w', w)
@@ -49,22 +70,23 @@ def gradient_descent(y, tx, compute_loss, compute_gradient, initial_w,
     return w, loss
 
 # Linear regression using gradient descent
-def least_squares_GD(y, tx, initial_w, max_iters, gamma, debugger=None):
-    w, loss = gradient_descent(y, tx, cost.compute_loss_ls, cost.compute_gradient_ls, initial_w, 
-                     max_iters, gamma, debugger=debugger)
+def least_squares_GD(y, tx, initial_w, max_iters, gamma, debugger=None, dynamic_gamma=False):
     '''Gradient descent algorithm for least squares'''
+    
+    w, loss = gradient_descent(y, tx, cost.compute_loss_ls, cost.compute_gradient_ls, initial_w, 
+                     max_iters, gamma, debugger=debugger, dynamic_gamma=dynamic_gamma)
     
     return w, loss
 
 # Linear regression using stochastic gradient descent
-def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None):
+def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None, dynamic_gamma=False):
     '''Stochastic Gradient descent algorithm for least squares'''
     
     batch_size = 1
     num_batch = 1
     
     w, loss = gradient_descent(y, tx, cost.compute_loss_ls, cost.compute_gradient_ls, initial_w, 
-                     max_iters, gamma, batch_size, num_batch, debugger=debugger)
+                     max_iters, gamma, batch_size, num_batch, debugger=debugger, dynamic_gamma=dynamic_gamma)
     
     return w, loss
 
@@ -101,17 +123,17 @@ def ridge_regression(y, tx, lambda_):
     
     return weights, loss
 
-def logistic_regression(y, tx, initial_w, max_iters, gamma, debugger=None):
+def logistic_regression(y, tx, initial_w, max_iters, gamma, debugger=None, dynamic_gamma=False):
     '''Logistic regression using gradient descent or GD'''
     
     return gradient_descent(y, tx, cost.compute_loss_ce, cost.compute_gradient_logreg, initial_w, 
-                     max_iters, gamma, batch_size=None, num_batch=None, debugger=debugger)
+                     max_iters, gamma, batch_size=None, num_batch=None, debugger=debugger, dynamic_gamma=dynamic_gamma)
 
 # Regularized logistic regression using gradient descent or SGD
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, debugger=None):
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, debugger=None, dynamic_gamma=False):
     '''Logistic regression using gradient descent or GD'''
     
     compute_gradient = lambda y, tx, w: cost.compute_gradient_reg_logreg(y, tx, w, lambda_)
     return gradient_descent(y, tx, cost.compute_loss_ce, compute_gradient, initial_w, 
-                     max_iters, gamma, batch_size=None, num_batch=None, debugger=debugger)
+                     max_iters, gamma, batch_size=None, num_batch=None, debugger=debugger, dynamic_gamma=dynamic_gamma)
 
