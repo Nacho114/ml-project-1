@@ -2,7 +2,7 @@ import numpy as np
 
 def normalise(x):
     """
-    Normalise x
+    Normalise 
     """
     return (x - x.mean(axis=0)) / x.std(axis=0)
 

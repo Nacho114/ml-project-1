@@ -134,6 +134,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, debugge
     '''Logistic regression using gradient descent or GD'''
     
     compute_gradient = lambda y, tx, w: cost.compute_gradient_reg_logreg(y, tx, w, lambda_)
-    return gradient_descent(y, tx, cost.compute_loss_ce, compute_gradient, initial_w, 
-                     max_iters, gamma, batch_size=None, num_batch=None, debugger=debugger, dynamic_gamma=dynamic_gamma)
+    compute_loss = lambda y, tx, w: cost.compute_loss_reg_ce(y, tx, w, lambda_)
 
+    return gradient_descent(y, tx, compute_loss, compute_gradient, initial_w, 
+                     max_iters, gamma, batch_size=None, num_batch=None, debugger=debugger, dynamic_gamma=dynamic_gamma)

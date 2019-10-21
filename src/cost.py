@@ -35,6 +35,9 @@ def compute_loss_ce(y, tx, w):
     
     return loss
 
+def compute_loss_reg_ce(y, tx, w, lambda_):
+    return compute_loss_ce(y, tx, w)  + lambda_/2 * np.linalg.norm(w)
+
 ### Gradient of loss functions
 def compute_gradient_ls(y, tx, w):
     '''Gradient of least squares'''
