@@ -1,30 +1,38 @@
 import numpy as np
 import cost
 
-def predict(x, w):
+
+def lr_output(x, w):
     """
     Returns the binary predictions of logistic regression
     """
     z = cost.sigmoid(x @ w)
-    return get_predictions(z)
+    return z
 
 
-def get_predictions(y):
+def map_prediction(y):
     """
-    Given a vector of proababilities, returns the optimal bayes
-    prediction, i.e. 1 <-> pr(y_i) > .5, and 0 otherwise
+    Given a vector of proababilities, returns the maximum apostetiori
+    prediction (MAP), i.e. 1 <-> pr(y_i) > .5, and -1 otherwise
     """
     pred = np.ones(len(y)) 
     to_minus = y < .5 
     pred[to_minus] = -1
     return pred
 
+
+def predict_ls(y_pred):
+    """Generates class predictions given output of a linear model (or least squares [ls])"""
+    y_pred[np.where(y_pred <= 0)] = -1
+    y_pred[np.where(y_pred > 0)] = 1
+    
+    return y_pred
+
 def accuracy(y, y_):
     """
     Returns accuracy of prediction y_ vis-a-vis truth y
     """
     return (y == y_).sum() / len(y)
-
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
@@ -54,10 +62,8 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 ### Cross validation
 
-def build_k_indices(y, k_fold, seed):
+def build_k_indices(y, k_fold):
     """build k indices for k-fold."""
-    
-    np.random.seed(seed)
     
     num_row = y.shape[0]
     interval = int(num_row / k_fold)
@@ -68,35 +74,65 @@ def build_k_indices(y, k_fold, seed):
     
     return np.array(k_indices)
 
+def random_data_split(y, x, k_fold):
+    """Returns a random split of the data (test, train), s.t.
+    size train = k_fold * size test
+    """
+    k_indices = build_k_indices(y, k_fold)
+    k = 0
+    return split_data(y, x, k_indices, k)
 
-def cross_validation(y, x, k_indices, k, lambda_, degree):
-    """return the loss of ridge regression."""
-    
-    x_tr = x[np.concatenate((indices[:k], indices[k+1:]))].flatten()
-    y_tr = y[np.concatenate((indices[:k], indices[k+1:]))].flatten()
+
+def split_data(y, x, k_indices, k):
+    """"Splits the data y, x given k_indices and k"""
+
+    x_tr = x[np.concatenate((k_indices[:k], k_indices[k+1:]))].reshape((-1, x.shape[1]))
+    y_tr = y[np.concatenate((k_indices[:k], k_indices[k+1:]))].flatten()
+
+    train_data = x_tr, y_tr
     
     x_te = x[k_indices[k]]
     y_te = y[k_indices[k]]
-    
-    # ...
-    
-    return
 
-def use_cross_validation(seed, x, y, degree, k_fold, lambda_):
+    test_data = x_te, y_te
+
+    return train_data, test_data
+
+
+
+def single_cross_validation(y, x, k_indices, k, get_weights, compute_loss):
+    """Return train and test loss of one cross validation"""
+    
+    x_tr = x[np.concatenate((k_indices[:k], k_indices[k+1:]))].reshape((-1, x.shape[1]))
+    y_tr = y[np.concatenate((k_indices[:k], k_indices[k+1:]))].flatten()
+    
+    x_te = x[k_indices[k]]
+    y_te = y[k_indices[k]]
+
+    # get loss of train data and optimal weights
+    w, loss_tr = get_weights(y_tr, x_tr)
+
+    # get loss of test data
+    loss_te = compute_loss(y_te, x_te, w)
+
+    return loss_tr, loss_te, w
+
+def cross_validation(x, y, k_indices, get_weights, compute_loss):
 
     # split data in k fold
-    k_indices = build_k_indices(y, k_fold, seed)
+    k_fold = len(k_indices)
     
     # define lists to store the loss of training data and test data
     losses_tr = []
     losses_te = []
     
     for k in range(k_fold):
-        loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree)
+        loss_tr, loss_te, _ = single_cross_validation(y, x, k_indices, k, get_weights, compute_loss)
         losses_tr.append(loss_tr)
         losses_te.append(loss_te)
 
-    rmse_tr = np.mean(losses_tr)
-    rmse_te = np.mean(losses_te)
+    mean_loss_tr = np.mean(losses_tr)
+    mean_loss_te = np.mean(losses_te)
         
-    return
+    return mean_loss_tr, mean_loss_te
+

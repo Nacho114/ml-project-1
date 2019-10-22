@@ -47,3 +47,45 @@ def clean_data(x, err_val, find_replacement):
         x_clean[:, feature] = replace(x[:, feature], err_val, find_replacement)
         
     return x_clean
+
+
+def preprocess(x, to_replace, do_normalise=True, add_bias=True):
+    """
+    Preprocess the data matrix
+
+    1. to_replace clean a matrix by replacing errors values in each column
+    according to a specified replacement function.
+
+    e.g. [(-111, 'mean')] will replace all occurances of -111 with the mean value
+    of that featrue value over all samples (excluding -111).
+
+    2. do_normalise normalises the data if set true
+
+    3. add_bias adds a column of ones for the bias term
+    """
+
+    replace_method_map = {
+        'mean': np.mean,
+        'most_frequent': most_frequent,
+        'median': np.median
+    }
+
+    # for each err_val to be replaced (to_replace), replace
+    # with corresponding replace method
+    for err_val, replace_method in to_replace:
+        find_replacement = replace_method_map[replace_method]
+        x = clean_data(x, err_val, find_replacement)
+
+    if do_normalise:
+        x = normalise(x)
+
+    # Add bias column of 1s
+    if add_bias:
+        nb_samples = nb_samples = x.shape[0]
+        first_col = np.ones((nb_samples, 1))
+        x = np.concatenate((first_col, x), axis=1)
+    
+    return x
+
+
+

@@ -145,9 +145,11 @@ def ridge_regression(y, tx, lambda_):
     
     return weights, loss
 
+
+
 def logistic_regression(y, tx, initial_w, max_iters, gamma, debugger=None, dynamic_gamma=False):
     '''Logistic regression using gradient descent or GD'''
-    
+
     compute_loss = cost.compute_loss_ce
     compute_gradient = cost.compute_gradient_logreg
     
