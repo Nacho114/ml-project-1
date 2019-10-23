@@ -1,9 +1,15 @@
 import numpy as np
 
+from utils import jet_num_handler
+
 def normalise(x):
     """
     Normalise 
     """
+
+    if np.all(x == x[0]):
+        return x
+
     return (x - x.mean(axis=0)) / x.std(axis=0)
 
 def most_frequent(x, extended_output=False):
@@ -88,4 +94,16 @@ def preprocess(x, to_replace, do_normalise=True, add_bias=True):
     return x
 
 
+def preprocess_jet_num(x, y, to_replace, do_normalise=True, add_bias=True):
+
+    x_split, y_split = jet_num_handler.split_by_jet_num(x, y)
+    clean_x_split = jet_num_handler.clean_split(x_split)
+
+    cleaner_x_split = []
+
+    for x_ in clean_x_split:
+        cleaner_x = preprocess(x_, to_replace, do_normalise, add_bias)
+        cleaner_x_split.append(cleaner_x)
+
+    return cleaner_x_split, y_split
 
