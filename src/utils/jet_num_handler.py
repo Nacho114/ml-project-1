@@ -18,7 +18,8 @@ def split_by_jet_num(x, y):
     for jet_num in constant.JET_NUM_VAL:
         mask = x[:, constant.JET_NUM_COL] == jet_num
         x_split.append(x[mask])
-        y_split.append(y[mask])
+        if not y is None:
+            y_split.append(y[mask])
 
     return x_split, y_split
 
