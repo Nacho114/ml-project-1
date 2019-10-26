@@ -22,14 +22,14 @@ to_replace = [(constant.UNDEF_VAL, 'most_frequent')]
 
 augment_param = {
     'degrees': [2],
-    'add_bias' : True,
+    'add_bias' : False,
     'add_cross': True,
     'add_tanh': False
 }
 
 # Split based on jet_num 
 x_split, y_split, jet_num_to_idx = pp.preprocess_jet_num(x=x, y=y, to_replace=to_replace, 
-                do_normalise=False, augment_param=augment_param)
+                do_normalise=True, augment_param=augment_param)
 
 
 # Model parameters
