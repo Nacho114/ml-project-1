@@ -1,6 +1,7 @@
 import numpy as np
 
 from utils import jet_num_handler
+from utils import feature_augmentation as fea
 
 def normalise(x):
     """
@@ -55,7 +56,7 @@ def clean_data(x, err_val, find_replacement):
     return x_clean
 
 
-def preprocess(x, to_replace, do_normalise=True, add_bias=True):
+def preprocess(x, to_replace, do_normalise=True, add_bias=True, augment_param=None):
     """
     Preprocess the data matrix
 
@@ -85,6 +86,9 @@ def preprocess(x, to_replace, do_normalise=True, add_bias=True):
     if do_normalise:
         x = normalise(x)
 
+    if augment_param:
+        x = fea.augment_features(x, augment_param)
+
     # Add bias column of 1s
     if add_bias:
         nb_samples = nb_samples = x.shape[0]
@@ -94,7 +98,7 @@ def preprocess(x, to_replace, do_normalise=True, add_bias=True):
     return x
 
 
-def preprocess_jet_num(x, y, to_replace, do_normalise=True, add_bias=True):
+def preprocess_jet_num(x, y, to_replace, do_normalise=True, add_bias=True, augment_param=None):
 
     x_split, y_split = jet_num_handler.split_by_jet_num(x, y)
     clean_x_split = jet_num_handler.clean_split(x_split)
@@ -102,7 +106,7 @@ def preprocess_jet_num(x, y, to_replace, do_normalise=True, add_bias=True):
     cleaner_x_split = []
 
     for x_ in clean_x_split:
-        cleaner_x = preprocess(x_, to_replace, do_normalise, add_bias)
+        cleaner_x = preprocess(x_, to_replace, do_normalise, add_bias, augment_param)
         cleaner_x_split.append(cleaner_x)
 
     return cleaner_x_split, y_split

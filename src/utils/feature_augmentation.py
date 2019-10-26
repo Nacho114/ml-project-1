@@ -1,7 +1,7 @@
 import numpy as np
-
-
+    
 def build_poly(x, degree):
+    """polynomial basis functions for input data x, for j=2 up to j=degree."""
     if(degree < 2):
         return np.array([])
 
@@ -14,3 +14,13 @@ def build_poly(x, degree):
         matrix = np.concatenate((matrix, vector), axis=0)
     
     return matrix.T
+
+
+def augment_features(x, augment_param):
+    degree = augment_param['degree']
+
+    x_pol = build_poly(x, degree)
+
+    x_aug = np.concatenate((x, x_pol), axis=1)
+
+    return x_aug
