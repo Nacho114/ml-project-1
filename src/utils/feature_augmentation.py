@@ -9,8 +9,8 @@ def build_poly(x, degrees):
 
     return x_exp
     
-def add_bias(x)
-    return = np.ones((x.shape[0], 1))
+def add_bias(x):
+    return np.ones((x.shape[0], 1))
     
 def cross_features(x):
     cross = np.zeros(x.shape[1])
