@@ -5,10 +5,13 @@ from utils import preprocessing as pp
 from utils import constant
 import model
 
+#
+from utils import misc
+
 
 # LOAD TEST DATA
 
-DATA_TEST_PATH = '../data/test.csv' 
+DATA_TEST_PATH = '../data/train.csv' 
 y, x, ids = loader.load_csv_data(DATA_TEST_PATH)
 
 nb_samples = len(x)
@@ -24,7 +27,7 @@ augment_param = {
 }
 
 # Split based on jet_num 
-x_split, _ = pp.preprocess_jet_num(x=x, y=None, to_replace=to_replace, 
+x_split, y_split = pp.preprocess_jet_num(x=x, y=y, to_replace=to_replace, 
                 do_normalise=False, augment_param=augment_param)
 
 
@@ -36,6 +39,9 @@ learning_param = { 'lambda_': 1e-6 }
 file_name = 'weights.npy'
 weights = np.load(file_name) 
 
+
+acc_list = []
+
 predictions = []
 for idx, x_partition in enumerate(x_split):
     print(x_partition.shape) 
@@ -43,9 +49,12 @@ for idx, x_partition in enumerate(x_split):
     y_ = model_ls.predict(x_partition)
     predictions.append(y_)
 
+    y_te = y_split[idx]
+    acc_list.append(misc.accuracy(y_te, y_))
+
 predictions = np.concatenate(predictions)
 
+print(acc_list)
 
-print(predictions)
-
-loader.create_csv_submission(ids, predictions, "final_submission.csv")
+# TODO
+# loader.create_csv_submission(ids, predictions, "final_submission.csv")

@@ -21,6 +21,15 @@ def cross_features(x):
             
     return cross[:, 1:]
 
+def pairwise_dist_features(x):
+    cross = np.zeros((x.shape[0], 1))
+    
+    for i in range(x.shape[1]):
+        for j in range(i+1, x.shape[1]):
+            cross = np.concatenate((cross, (x[:,i] - x[:,j])[:, np.newaxis]), axis=1)
+            
+    return cross[:, 1:]
+
 
 def augment_features(x, augment_param):
     degrees = augment_param['degrees']
