@@ -20,14 +20,6 @@ def cross_features(x):
             cross = np.concatenate((cross, (x[:,i]*x[:,j])[:, np.newaxis]), axis=1)
             
     return cross[:, 1:]
-    
-def cross_features(x):
-    cross = np.zeros(x.shape[1])
-    
-    for i in range(x.shape[1]):
-        for j in range(i, x.shape[1]):
-            cross = np.concatenate(cross, x[i]*x[j])
-
 def augment_features(x, augment_param):
     degree = augment_param['degree']
 
