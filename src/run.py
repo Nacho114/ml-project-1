@@ -18,8 +18,9 @@ nb_samples = len(x)
 to_replace = [(constant.UNDEF_VAL, 'most_frequent')]
 
 augment_param = {
-    'degree': [2],
-    'add_bias' : True
+    'degrees': [2],
+    'add_bias' : True,
+    'add_cross': True
 }
 
 # Split based on jet_num 
@@ -47,4 +48,4 @@ predictions = np.concatenate(predictions)
 
 print(predictions)
 
-create_csv_submission(indices_test, predictions, "final_submission.csv")
+loader.create_csv_submission(ids, predictions, "final_submission.csv")
