@@ -9,7 +9,7 @@ def build_poly(x, degrees):
 
     return x_exp
     
-def add_bias(x):
+def get_bias(x):
     return np.ones((x.shape[0], 1))
     
 def cross_features(x):
@@ -20,11 +20,26 @@ def cross_features(x):
             cross = np.concatenate((cross, (x[:,i]*x[:,j])[:, np.newaxis]), axis=1)
             
     return cross[:, 1:]
+
+
 def augment_features(x, augment_param):
-    degree = augment_param['degree']
+    degrees = augment_param['degrees']
+    add_bias = augment_param['add_bias']
+    add_cross = augment_param['add_cross']
 
-    x_pol = build_poly(x, degree)
+    x_aug = x
 
-    x_aug = np.concatenate((x, x_pol), axis=1)
+    if degrees:
+        x_pol = build_poly(x, degrees)
+        x_aug = np.concatenate((x_aug, x_pol), axis=1)
+
+    if add_cross:
+        x_cross = cross_features(x)
+        x_aug = np.concatenate((x_aug, x_cross), axis=1)    
+
+    if add_bias:
+        bias = get_bias(x)
+        x_aug = np.concatenate((bias, x_aug), axis=1)
+
 
     return x_aug
