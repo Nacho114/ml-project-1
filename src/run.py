@@ -22,9 +22,9 @@ to_replace = [(constant.UNDEF_VAL, 'most_frequent')]
 
 augment_param = {
     'degrees': [2],
-    'add_bias' : False,
+    'add_bias' : True,
     'add_cross': True,
-    'add_tanh': False
+    'add_tanh': True
 }
 
 # Split based on jet_num 
