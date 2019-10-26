@@ -21,11 +21,12 @@ def cross_features(x):
             
     return cross[:, 1:]
 
-
 def augment_features(x, augment_param):
     degrees = augment_param['degrees']
     add_bias = augment_param['add_bias']
     add_cross = augment_param['add_cross']
+    add_tanh = augment_param['add_tanh']
+    
 
     x_aug = x
 
@@ -35,11 +36,14 @@ def augment_features(x, augment_param):
 
     if add_cross:
         x_cross = cross_features(x)
-        x_aug = np.concatenate((x_aug, x_cross), axis=1)    
+        x_aug = np.concatenate((x_aug, x_cross), axis=1)   
+        
+    if add_tanh:
+        tanh = np.tanh(x)
+        x_aug = np.concatenate((x_aug, tanh), axis=1) 
 
     if add_bias:
         bias = get_bias(x)
         x_aug = np.concatenate((bias, x_aug), axis=1)
-
 
     return x_aug
