@@ -56,7 +56,7 @@ def clean_data(x, err_val, find_replacement):
     return x_clean
 
 
-def preprocess(x, to_replace, do_normalise=True, add_bias=True, augment_param=None):
+def preprocess(x, to_replace, do_normalise=True, augment_param=None):
     """
     Preprocess the data matrix
 
@@ -88,12 +88,6 @@ def preprocess(x, to_replace, do_normalise=True, add_bias=True, augment_param=No
 
     if augment_param:
         x = fea.augment_features(x, augment_param)
-
-    # Add bias column of 1s
-    if add_bias:
-        nb_samples = nb_samples = x.shape[0]
-        first_col = np.ones((nb_samples, 1))
-        x = np.concatenate((first_col, x), axis=1)
     
     return x
 

@@ -14,7 +14,9 @@ def build_poly(x, degree):
         matrix = np.concatenate((matrix, vector), axis=0)
     
     return matrix.T
-
+    
+def add_bias(x)
+    return = np.ones((x.shape[0], 1))
 
 def augment_features(x, augment_param):
     degree = augment_param['degree']
