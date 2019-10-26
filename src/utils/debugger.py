@@ -29,9 +29,6 @@ class Debugger:
             print('step {}/{}'.format(size - last_n + i + 1, size) + ':\t' + data_type + ': ' + str(x))
 
 
-
-
-
 def cross_validation_visualization(lambds, mse_tr, mse_te):
     """visualization the curves of mse_tr and mse_te."""
     plt.semilogx(lambds, mse_tr, marker=".", color='b', label='train error')
