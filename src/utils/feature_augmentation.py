@@ -5,12 +5,19 @@ def build_poly(x, degrees):
 
     x_exp = x**degrees[0]
     for degree in degrees[1:]:
-        x_exp = np.concatenate((x_exp, x**degree), axis=0)
+        x_exp = np.concatenate((x_exp, x**degree), axis=1)
 
     return x_exp
     
 def add_bias(x)
     return = np.ones((x.shape[0], 1))
+    
+def cross_features(x):
+    cross = np.zeros(x.shape[1])
+    
+    for i in range(x.shape[1]):
+        for j in range(i, x.shape[1]):
+            cross = np.concatenate(cross, x[i]*x[j])
 
 def augment_features(x, augment_param):
     degree = augment_param['degree']
