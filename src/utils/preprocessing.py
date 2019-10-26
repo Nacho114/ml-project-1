@@ -5,13 +5,15 @@ from utils import feature_augmentation as fea
 
 def normalise(x):
     """
-    Normalise 
+    Normalise
     """
+    
+    eps = 1e-8
 
     if np.all(x == x[0]):
         return x
 
-    return (x - x.mean(axis=0)) / x.std(axis=0)
+    return (x - x.mean(axis=0)) / (x.std(axis=0)+eps)
 
 def most_frequent(x, extended_output=False):
     """
