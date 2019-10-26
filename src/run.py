@@ -11,9 +11,9 @@ from utils import misc
 
 # LOAD TEST DATA
 
-DATA_TEST_PATH = '../data/train.csv' 
+DATA_TEST_PATH = '../data/test.csv' 
 y, x, ids = loader.load_csv_data(DATA_TEST_PATH)
-
+y = None
 nb_samples = len(x)
 
 
@@ -23,11 +23,12 @@ to_replace = [(constant.UNDEF_VAL, 'most_frequent')]
 augment_param = {
     'degrees': [2],
     'add_bias' : True,
-    'add_cross': True
+    'add_cross': True,
+    'add_tanh': False
 }
 
 # Split based on jet_num 
-x_split, y_split = pp.preprocess_jet_num(x=x, y=y, to_replace=to_replace, 
+x_split, y_split, jet_num_to_idx = pp.preprocess_jet_num(x=x, y=y, to_replace=to_replace, 
                 do_normalise=False, augment_param=augment_param)
 
 
@@ -49,12 +50,18 @@ for idx, x_partition in enumerate(x_split):
     y_ = model_ls.predict(x_partition)
     predictions.append(y_)
 
-    y_te = y_split[idx]
-    acc_list.append(misc.accuracy(y_te, y_))
+    # y_te = y_split[idx]
+    # acc_list.append(misc.accuracy(y_te, y_))
 
-predictions = np.concatenate(predictions)
+for i in range(3):
+    print(i, predictions[i].shape, jet_num_to_idx[i].shape)
 
-print(acc_list)
+predictions = misc.merge_predictions(predictions, jet_num_to_idx)
+
+# easy_acc = misc.accuracy(y, predictions)
+
+# print(acc_list)
+# print('easy acc', easy_acc)
 
 # TODO
-# loader.create_csv_submission(ids, predictions, "final_submission.csv")
+loader.create_csv_submission(ids, predictions, "final_submission.csv")

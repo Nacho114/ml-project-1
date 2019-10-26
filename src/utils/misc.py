@@ -2,6 +2,20 @@ import numpy as np
 import cost
 
 
+def merge_predictions(y_pred_split, jet_num_to_idx):
+    """ 
+    Merge back predictions based on original index
+    of the data
+    """
+    nb_samples = sum([len(y) for y in y_pred_split])
+    pred = np.zeros(nb_samples)
+
+    for y, mask in zip(y_pred_split, jet_num_to_idx):
+        pred[mask] = y
+
+    return pred
+
+
 def lr_output(x, w):
     """
     Returns the binary predictions of logistic regression

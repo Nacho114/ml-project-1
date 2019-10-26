@@ -96,7 +96,7 @@ def preprocess(x, to_replace, do_normalise=True, augment_param=None):
 
 def preprocess_jet_num(x, y, to_replace, do_normalise=True, augment_param=None):
 
-    x_split, y_split = jet_num_handler.split_by_jet_num(x, y)
+    x_split, y_split, jet_num_to_idx = jet_num_handler.split_by_jet_num(x, y)
     clean_x_split = jet_num_handler.clean_split(x_split)
 
     cleaner_x_split = []
@@ -105,5 +105,5 @@ def preprocess_jet_num(x, y, to_replace, do_normalise=True, augment_param=None):
         cleaner_x = preprocess(x_, to_replace, do_normalise, augment_param)
         cleaner_x_split.append(cleaner_x)
 
-    return cleaner_x_split, y_split
+    return cleaner_x_split, y_split, jet_num_to_idx
 
