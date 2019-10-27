@@ -25,7 +25,8 @@ def cross_features(x):
 
 def augment_features(x, augment_param):
     """augment x with the given parameters given in augment data"""
-    required_params = ['degrees', 'add_bias', 'add_cross', 'add_tanh']
+    required_params = ['degrees', 'add_bias', 'add_cross', 
+                        'add_tanh', 'cumulative']
 
     for param in required_params:
         if param not in augment_param:
@@ -35,6 +36,7 @@ def augment_features(x, augment_param):
     add_bias = augment_param['add_bias']
     add_cross = augment_param['add_cross']
     add_tanh = augment_param['add_tanh']
+    is_cumulative = augment_param['cumulative']
 
     x_aug = x
 
@@ -43,11 +45,13 @@ def augment_features(x, augment_param):
         x_aug = np.concatenate((x_aug, x_pol), axis=1)
 
     if add_cross:
-        x_cross = cross_features(x)
+        x_arg = x_aug if is_cumulative else x
+        x_cross = cross_features(x_arg)
         x_aug = np.concatenate((x_aug, x_cross), axis=1)   
         
     if add_tanh:
-        tanh = np.tanh(x)
+        x_arg = x_aug if is_cumulative else x
+        tanh = np.tanh(x_arg)
         x_aug = np.concatenate((x_aug, tanh), axis=1) 
 
     if add_bias:

@@ -93,7 +93,7 @@ def preprocess(x, to_replace, do_normalise=True, augment_param=None):
     return x
 
 
-def preprocess_jet_num(x, y, to_replace, do_normalise=True, augment_param=None):
+def preprocess_jet_num(x, y, to_replace, do_normalise, augment_param_list):
     """ 
     Given the data x, y, we perform the following:
 
@@ -115,7 +115,7 @@ def preprocess_jet_num(x, y, to_replace, do_normalise=True, augment_param=None):
 
     cleaner_x_split = []
 
-    for x_ in clean_x_split:
+    for x_, augment_param in zip(clean_x_split, augment_param_list):
         cleaner_x = preprocess(x_, to_replace, do_normalise, augment_param)
         cleaner_x_split.append(cleaner_x)
 

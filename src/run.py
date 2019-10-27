@@ -12,7 +12,6 @@ def main():
 
     DATA_TEST_PATH = '../data/test.csv' 
     y, x, ids = loader.load_csv_data(DATA_TEST_PATH)
-    y = None
     nb_samples = len(x)
 
 
