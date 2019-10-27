@@ -7,7 +7,6 @@ def normalise(x):
     """
     Normalise
     """
-    
     eps = 1e-8
 
     if np.all(x == x[0]):
@@ -95,6 +94,21 @@ def preprocess(x, to_replace, do_normalise=True, augment_param=None):
 
 
 def preprocess_jet_num(x, y, to_replace, do_normalise=True, augment_param=None):
+    """ 
+    Given the data x, y, we perform the following:
+
+    - to_replace is a list of pairs (a, b), s.t. we replace a, with some average 
+    across that feature, for example with most frequent value.
+
+    example:
+
+    to_replace = [(constant.UNDEF_VAL, 'most_frequent')]
+
+    - do_normalise, if true we normalise the data
+
+    - augment_param, list of paramaters for data augmentation, e.g. degree of polynomial
+    (see feature_agumentation)
+    """
 
     x_split, y_split, jet_num_to_idx = jet_num_handler.split_by_jet_num(x, y)
     clean_x_split = jet_num_handler.clean_split(x_split)

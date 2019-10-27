@@ -3,6 +3,9 @@ import numpy as np
 from utils import constant
 
 def get_undef_cols_idx(x, undef_val):
+    """
+    Find columns where all entries are undefined
+    """
     undef_col_idx = []
     for col_idx in range(x.shape[1]):
         column = x[:, col_idx]
@@ -56,7 +59,6 @@ def split_by_jet_num(x, y):
 
 
     # merge jet_num_idx
-            
     x_split_reduce = []
     x_split_reduce.append(x_split[0])
     x_split_reduce.append(x_split[1])
@@ -75,6 +77,10 @@ def split_by_jet_num(x, y):
     return x_split_reduce, y_split_reduce, jet_num_to_idx
 
 def clean_split(x_split):
+    """
+    Given a data split x_split (by jet_num), we remove the undefined
+    columns of the respective data.
+    """
     clean_x_split = []
 
     undef_idx_of_jet_num = constant.UNDEF_IDX_OF_JET_NUM

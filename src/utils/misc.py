@@ -1,7 +1,6 @@
 import numpy as np
 import cost
 
-
 def merge_predictions(y_pred_split, jet_num_to_idx):
     """ 
     Merge back predictions based on original index
@@ -132,6 +131,7 @@ def single_cross_validation(y, x, k_indices, k, get_weights, compute_loss):
     return loss_tr, loss_te, w
 
 def cross_validation(x, y, k_indices, get_weights, compute_loss):
+    """Return train and test loss of the average cross validation"""
 
     # split data in k fold
     k_fold = len(k_indices)

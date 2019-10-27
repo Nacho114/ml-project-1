@@ -10,9 +10,11 @@ def build_poly(x, degrees):
     return x_exp
     
 def get_bias(x):
+    """Return the bis term (a vector of ones)"""
     return np.ones((x.shape[0], 1))
     
 def cross_features(x):
+    """Return a matrix with all the cross products of the data (correlations)"""
     cross = np.zeros((x.shape[0], 1))
     
     for i in range(x.shape[1]):
@@ -22,11 +24,11 @@ def cross_features(x):
     return cross[:, 1:]
 
 def augment_features(x, augment_param):
+    """augment x with the given parameters given in augment data"""
     degrees = augment_param['degrees']
     add_bias = augment_param['add_bias']
     add_cross = augment_param['add_cross']
     add_tanh = augment_param['add_tanh']
-    
 
     x_aug = x
 

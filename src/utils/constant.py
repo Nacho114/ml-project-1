@@ -1,3 +1,7 @@
+"""
+Some constants of the Higgs Bosson Data
+"""
+
 
 JET_NUM_COL = 22
 JET_NUM_VAL = [0, 1, 2, 3]
