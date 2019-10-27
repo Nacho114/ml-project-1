@@ -25,6 +25,12 @@ def cross_features(x):
 
 def augment_features(x, augment_param):
     """augment x with the given parameters given in augment data"""
+    required_params = ['degrees', 'add_bias', 'add_cross', 'add_tanh']
+
+    for param in required_params:
+        if param not in augment_param:
+            augment_param[param] = None
+
     degrees = augment_param['degrees']
     add_bias = augment_param['add_bias']
     add_cross = augment_param['add_cross']

@@ -71,9 +71,6 @@ def split_by_jet_num(x, y):
         y_split_reduce.append(y_split[1])
         y_split_reduce.append(y_split[2])
 
-    for i in range(3):
-        print(i, x_split_reduce[i].shape, jet_num_to_idx[i].shape)
-
     return x_split_reduce, y_split_reduce, jet_num_to_idx
 
 def clean_split(x_split):
@@ -92,4 +89,3 @@ def clean_split(x_split):
         clean_x_split.append(new_x)
 
     return clean_x_split
-

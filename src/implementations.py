@@ -7,6 +7,7 @@ encountered w for iterative methods, here we only want the last one.
 '''
 
 import numpy as np
+np.random.seed(114)
 
 from utils import misc
 import cost
@@ -95,33 +96,14 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None, dynamic
     return w, loss
 
 # Least squares regression using normal equations
-def least_squares_old_version(y, tx):
-    '''Solving least squares via the normal equations'''
-    
-    N = len(y)
-
-    xtx_inv = np.linalg.inv(tx.T @ tx)
-    
-    weights = (xtx_inv @ (tx.T)) @ y
-    mse = cost.compute_loss_ls(y, tx, weights)
-    
-    return weights, mse
-
-# Least squares regression using normal equations
 def least_squares(y, tx):
     '''Solving least squares via the normal equations'''
-    
-    N = len(y)
-    [weights, _, _, _] = np.linalg.lstsq(tx, y, rcond=None)
-    
-    loss = cost.compute_loss_ls(y, tx, weights)
-    
-    return weights, loss
-
+    eps = 1e-6 # add some noise for stability
+    return ridge_regression(y, tx, lambda_=eps)
+  
 # Ridge regression using normal equations
-def ridge_regression_old_version(y, tx, lambda_):
+def ridge_regression(y, tx, lambda_):
     '''Solving least squares via the normal equations'''
-    
     N = len(y)
 
     xtx_inv = np.linalg.inv(tx.T @ tx + lambda_ * (2*N) * np.eye(tx.shape[1]))
@@ -130,21 +112,6 @@ def ridge_regression_old_version(y, tx, lambda_):
     loss = cost.compute_loss_ls(y, tx, weights)
     
     return weights, loss
-
-def ridge_regression(y, tx, lambda_):
-    '''Solving ridge regression via the normal equations'''
-    
-    N = len(y)
-    M = tx.shape[1]
-    
-    a = tx.T @ tx + lambda_* (2*N) * np.identity(M)
-    b = tx.T @ y
-    
-    [weights, _, _, _] = np.linalg.lstsq(a, b, rcond=None)
-    loss = cost.compute_loss_ls(y, tx, weights)
-    
-    return weights, loss
-
 
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma, debugger=None, dynamic_gamma=False):

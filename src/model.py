@@ -19,6 +19,7 @@ class Model:
     - reg_logistic_regression
     - least_squares_GD
     - ridge_regression
+    - least_squares
     """
 
     def __init__(self, model_name, w=None, learning_param=None, debug=True):
@@ -74,6 +75,13 @@ class Model:
             lambda_ = learning_param['lambda_']
             
             self.learn = lambda y, x, w, dbg: impl.ridge_regression(y, x, lambda_)
+
+        if model_name == 'least_squares':
+            self.model_output = np.dot
+            self.compute_loss = cost.compute_loss_ls
+            self.predict_output = misc.predict_ls
+
+            self.learn = lambda y, x, w, dbg: impl.least_squares(y, x)
 
         
     def predict(self, x):
