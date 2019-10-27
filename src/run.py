@@ -8,7 +8,6 @@ from utils import misc
 
 np.random.seed(114)
 
-
 def get_models(model_type, learning_param, nb_models=3):
     """generate models based on params"""
     models = []
@@ -33,6 +32,27 @@ def train_models(train_data, models):
         curr_model.learn_weights(y_tr, x_tr)
 
 
+def train(models, data_train_path, augment_param_list, to_replace, do_normalise):
+
+    print('Loading train set...')
+    y, x, _ = loader.load_csv_data(data_train_path)
+
+    # Split train based on jet_num 
+    x_split, y_split, _ = \
+            pp.preprocess_jet_num(x=x, 
+                                  y=y, 
+                                  to_replace=to_replace, 
+                                  do_normalise=do_normalise, 
+                                  augment_param_list=augment_param_list)
+
+    train_data = {
+        'x_split': x_split,
+        'y_split': y_split
+    }
+
+    train_models(train_data, models)
+
+
 def get_predictions(test_data, models):
     """predict output based on model and data"""
     x_split = test_data['x_split']
@@ -52,36 +72,19 @@ def get_predictions(test_data, models):
 
 def main():
 
-    ### LOAD TEST DATA ###
+    ### Data path ###
 
-    DATA_TEST_PATH = '../data/test.csv' 
-    DATA_TRAIN_PATH = '../data/train.csv' 
+    data_test_path = '../data/test.csv' 
+    data_train_path = '../data/train.csv' 
 
-    data = {}
 
-    y, x, ids = loader.load_csv_data(DATA_TEST_PATH)
-
-    data['test'] = {
-        'y': y,
-        'x': x,
-        'ids': ids
-    }
-
-    y, x, ids = loader.load_csv_data(DATA_TRAIN_PATH)
-
-    data['train'] = {
-        'y': y,
-        'x': x,
-        'ids': ids
-    }
-
-    # CLEAN DATA OPTION
+    ### CLEAN DATA OPTION ###
 
     to_replace = [(constant.UNDEF_VAL, 'mean')]
 
     do_normalise = True
 
-    # FEATURE AUGMENTATION PARAMS
+    ### FEATURE AUGMENTATION PARAMS ###
 
     augment_param_0 = { 
         'degrees': [2,3], 
@@ -110,32 +113,6 @@ def main():
     augment_param_list = [augment_param_0, augment_param_1, augment_param_23]
 
 
-    # Split test based on jet_num 
-    x_split, y_split, jet_num_to_idx = \
-            pp.preprocess_jet_num(x=data['test']['x'], 
-                                  y=data['test']['y'], 
-                                  to_replace=to_replace, 
-                                  do_normalise=do_normalise, 
-                                  augment_param_list=augment_param_list)
-
-    data['test']['x_split'] = x_split
-    data['test']['y_split'] = y_split
-    data['test']['jet_num_to_idx'] = jet_num_to_idx
-
-
-    # Split train based on jet_num 
-    x_split, y_split, jet_num_to_idx = \
-            pp.preprocess_jet_num(x=data['train']['x'], 
-                                  y=data['train']['y'], 
-                                  to_replace=to_replace, 
-                                  do_normalise=do_normalise, 
-                                  augment_param_list=augment_param_list)
-
-    data['train']['x_split'] = x_split
-    data['train']['y_split'] = y_split
-    data['train']['jet_num_to_idx'] = jet_num_to_idx
-
-
     # Model parameters
 
     model_type = 'ridge_regression'
@@ -144,16 +121,41 @@ def main():
     # get models
     models = get_models(model_type, learning_param)
 
-    # train models
-    train_models(data['train'], models)
+    print('Training models...')
+    train(models, data_train_path, augment_param_list, to_replace, do_normalise)
+
+
+    print('Loading test set...')
+    import time
+    start = time.time()
+
+    y, x, ids = loader.load_csv_data(data_test_path)
+
+    # Split test based on jet_num 
+    x_split, y_split, jet_num_to_idx = \
+            pp.preprocess_jet_num(x=x, 
+                                  y=y, 
+                                  to_replace=to_replace, 
+                                  do_normalise=do_normalise, 
+                                  augment_param_list=augment_param_list)
+
+    test_data = {}
+    test_data['x_split'] = x_split
+    test_data['y_split'] = y_split
+    test_data['jet_num_to_idx'] = jet_num_to_idx
+
+
+    end = time.time()
+    print('preprocess time (for both train and test):', end - start)
+
+
+    print('Evaluating test...')
 
     # predict labels of test
-    predictions = get_predictions(data['test'], models)
-
-
-    ids = data['test']['ids']
+    predictions = get_predictions(test_data, models)
 
     loader.create_csv_submission(ids, predictions, "final_submission.csv")
+
 
 if __name__ == '__main__':
     main()
