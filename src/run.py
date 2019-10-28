@@ -1,12 +1,8 @@
-import numpy as np
-
-from utils import loader
 from utils import preprocessing as pp 
 from utils import constant
-import model
+from utils import loader
 from utils import misc
-
-np.random.seed(114)
+import model
 
 def get_models(model_type, learning_param, nb_models=3):
     """generate models based on params"""
@@ -17,7 +13,6 @@ def get_models(model_type, learning_param, nb_models=3):
         models.append(curr_model)
 
     return models
-
 
 def train_models(train_data, models):
     """Train models with the given data"""
@@ -31,12 +26,14 @@ def train_models(train_data, models):
         curr_model = models[idx]
         curr_model.learn_weights(y_tr, x_tr)
 
-
 def train(models, data_train_path, augment_param_list, to_replace, do_normalise):
+    """Given a set of models (with respective param), and data train path, will 
+    train the given models."""
 
     print('Loading train set...')
     y, x, _ = loader.load_csv_data(data_train_path)
 
+    print('Preprocessing train set...')
     # Split train based on jet_num 
     x_split, y_split, _ = \
             pp.preprocess_jet_num(x=x, 
@@ -51,7 +48,6 @@ def train(models, data_train_path, augment_param_list, to_replace, do_normalise)
     }
 
     train_models(train_data, models)
-
 
 def get_predictions(test_data, models):
     """predict output based on model and data"""
@@ -69,7 +65,6 @@ def get_predictions(test_data, models):
 
     return predictions
 
-
 def main():
 
     ### Data path ###
@@ -77,14 +72,12 @@ def main():
     data_test_path = '../data/test.csv' 
     data_train_path = '../data/train.csv' 
 
-
     ### CLEAN DATA OPTION ###
 
     to_replace = [(constant.UNDEF_VAL, 'mean')]
-
     do_normalise = True
 
-    ### FEATURE AUGMENTATION PARAMS ###
+    ### FEATURE AUGMENTATION PARAMS PER JET NUM ###
 
     augment_param_0 = { 
         'degrees': [2,3], 
@@ -112,26 +105,32 @@ def main():
 
     augment_param_list = [augment_param_0, augment_param_1, augment_param_23]
 
-
-    # Model parameters
+    ### Model parameters ###
 
     model_type = 'ridge_regression'
     learning_param = { 'lambda_': 1e-6 }
 
-    # get models
+    ### Get Models ###
+
     models = get_models(model_type, learning_param)
 
+
+    ### Train models ###
+
     print('Training models...')
+
     train(models, data_train_path, augment_param_list, to_replace, do_normalise)
 
+    ### Load Test Data ###
 
     print('Loading test set...')
-    import time
-    start = time.time()
 
     y, x, ids = loader.load_csv_data(data_test_path)
 
-    # Split test based on jet_num 
+    print('Preprocessing test set...')
+
+    ### Split test based on jet_num ###
+
     x_split, y_split, jet_num_to_idx = \
             pp.preprocess_jet_num(x=x, 
                                   y=y, 
@@ -144,18 +143,15 @@ def main():
     test_data['y_split'] = y_split
     test_data['jet_num_to_idx'] = jet_num_to_idx
 
-
-    end = time.time()
-    print('preprocess time (for both train and test):', end - start)
-
-
     print('Evaluating test...')
 
-    # predict labels of test
+    ### predict labels of test ###
+
     predictions = get_predictions(test_data, models)
 
-    loader.create_csv_submission(ids, predictions, "final_submission.csv")
+    ### Save result ###
 
+    loader.create_csv_submission(ids, predictions, "final_submission.csv")
 
 if __name__ == '__main__':
     main()
