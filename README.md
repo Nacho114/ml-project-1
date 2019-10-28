@@ -1,6 +1,12 @@
 # ml-project-1
 Dream Team project
 
+## Authors
+
+- Thierry Bossy
+- Raphael Strebel
+- Ignacio S. Aleman
+
 ## Description 
 Project 1 of the "Machine Learning" course (CS433), given in the Fall semester of 2019.
 
