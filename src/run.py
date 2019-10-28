@@ -27,6 +27,8 @@ def train_models(train_data, models):
         curr_model.learn_weights(y_tr, x_tr)
 
 def train(models, data_train_path, augment_param_list, to_replace, do_normalise):
+    """Given a set of models (with respective param), and data train path, will 
+    train the given models."""
 
     print('Loading train set...')
     y, x, _ = loader.load_csv_data(data_train_path)
