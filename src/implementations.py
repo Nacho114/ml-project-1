@@ -98,7 +98,7 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, debugger=None, dynamic
 # Least squares regression using normal equations
 def least_squares(y, tx):
     '''Solving least squares via the normal equations'''
-    eps = 1e-6 # add some noise for stability
+    eps = 0 # add some noise for stability
     return ridge_regression(y, tx, lambda_=eps)
   
 # Ridge regression using normal equations
