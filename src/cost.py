@@ -34,7 +34,7 @@ def compute_loss_ce(y, tx, w):
 
 def compute_loss_reg_ce(y, tx, w, lambda_):
     """Loss of the regularised cross entropy"""
-    return compute_loss_ce(y, tx, w)  + lambda_/2 * np.linalg.norm(w)
+    return compute_loss_ce(y, tx, w)  + lambda_/2 * np.linalg.norm(w)**2
 
 ### Gradient of loss functions
 def compute_gradient_ls(y, tx, w):
