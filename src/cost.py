@@ -1,6 +1,5 @@
 import numpy as np
 
-
 ### Function def
 def sigmoid(x):
     """Sigmoid function"""
