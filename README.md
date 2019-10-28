@@ -12,7 +12,7 @@ To run our project, create a folder named "data" at the root of the project dire
 
 ### Execution
 
-Navigate to "src" and run ```python run.py```.
+Navigate to "src" and run ```python run.py```. (Note that you need at least Python 3.6 to run the code)
 
 ## Code structure
 
